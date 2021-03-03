@@ -3,6 +3,7 @@ package file.system.based.chat.service;
 import file.system.based.chat.model.User;
 import file.system.based.chat.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.io.IOException;
 import java.util.List;

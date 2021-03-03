@@ -18,7 +18,7 @@ public class Main {
 
     @GetMapping("/")
     public String homePage(Authentication authentication) throws IOException {
-        System.out.println(userService.findAll());
+        System.out.println(userService.findByLogin("admin"));
         return "home";
     }
 
@@ -31,5 +31,10 @@ public class Main {
     public String registrationPage(User user){
         userService.save(user);
         return "redirect:/";
+    }
+
+    @GetMapping("/admin")
+    public String adminPage(){
+        return "admin";
     }
 }

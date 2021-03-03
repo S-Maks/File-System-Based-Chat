@@ -12,8 +12,6 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import javax.sql.DataSource;
 
 @Configuration
-@EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
@@ -23,23 +21,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/","/registration", "/css/**", "/fonts/**", "/img/**", "/scripts/**")
+                .antMatchers("/registration", "/css/**", "/fonts/**", "/img/**", "/scripts/**")
                 .permitAll()
+
                 .anyRequest()
                 .authenticated()
                 .and()
-                .formLogin()
-                .loginPage("/")
-                .permitAll()
-                .and()
-                .logout()
-                .permitAll();
+                // .formLogin()
+                // .loginPage("/")
+                // .permitAll()
+                // .and()
+                .httpBasic();
     }
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception{
-        auth.inMemoryAuthentication()
-                .withUser("admin")
-                .password("{noop}admin").roles("admin");
-    }
+    // @Override
+    // protected void configure(AuthenticationManagerBuilder auth) throws Exception{
+    //     auth.inMemoryAuthentication()
+    //             .withUser("admin")
+    //             .password("{noop}admin").roles("admin");
+    // }
 }

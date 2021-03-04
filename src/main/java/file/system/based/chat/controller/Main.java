@@ -4,6 +4,8 @@ import file.system.based.chat.model.User;
 import file.system.based.chat.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,10 +15,11 @@ public class Main {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/")
+    @GetMapping("/login")
     public String homePage(Authentication authentication) {
         if(authentication!=null){
-            return "redirect:/chat";
+
+            return "redirect:/";
         }
         return "home";
     }
@@ -29,10 +32,6 @@ public class Main {
     @PostMapping("/registration")
     public String registrationPage(User user) {
         userService.save(user);
-        return "redirect:/";
-    }
-    @GetMapping("/chat")
-    public String adminPage() {
-        return "chat";
+        return "redirect:/login";
     }
 }

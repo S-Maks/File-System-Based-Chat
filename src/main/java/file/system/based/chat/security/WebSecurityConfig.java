@@ -19,12 +19,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/registration", "/css/**", "/fonts/**", "/img/**", "/scripts/**")
+                .antMatchers("/registration", "/css/**", "/fonts/**", "/img/**", "/scripts/**","/js/**")
                 .permitAll()
-                .anyRequest().authenticated();
 
-                /*.anyRequest()
-                .authenticated();*/
+                .anyRequest().authenticated();
     }
 
     @Bean

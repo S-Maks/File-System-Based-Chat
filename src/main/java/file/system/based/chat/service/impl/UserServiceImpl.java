@@ -3,13 +3,9 @@ package file.system.based.chat.service.impl;
 import file.system.based.chat.model.User;
 import file.system.based.chat.repository.UserRepository;
 import file.system.based.chat.service.UserService;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -42,8 +38,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    @SneakyThrows
     public UserDetails loadUserByUsername(String s) {
-        return findByLogin(s).orElse(null);
+        try {
+            return findByLogin(s).orElse(null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

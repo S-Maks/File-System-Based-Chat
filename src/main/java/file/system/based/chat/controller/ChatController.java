@@ -1,5 +1,6 @@
 package file.system.based.chat.controller;
 
+import file.system.based.chat.conventer.Converter;
 import file.system.based.chat.model.Message;
 import file.system.based.chat.model.User;
 import file.system.based.chat.service.MessageService;
@@ -22,7 +23,6 @@ public class ChatController {
         User user = (User)authentication.getPrincipal();
         message.setSendUser((int) user.getId());
         messageService.save(message);
-        System.out.println(message);
         return message;
     }
 }

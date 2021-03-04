@@ -7,7 +7,7 @@ public class Message {
     private String content;
     private int toUser;
     private int sendUser;
-    private final String date = new SimpleDateFormat("yyyy.MM.dd-hh.mm.ss").format(new Date());
+    private String date = new SimpleDateFormat("yyyy.MM.dd-hh.mm.ss").format(new Date());
 
     public String getContent() {
         return content;
@@ -35,6 +35,10 @@ public class Message {
 
     public String getDate() {
         return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     @Override

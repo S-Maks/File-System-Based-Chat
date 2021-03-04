@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class MessageServiceImpl implements MessageService {
 
@@ -21,11 +23,16 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public void edit(Message message) {
-
+        messageRepository.edit(message);
     }
 
     @Override
     public void delete(Message message) {
 
+    }
+
+    @Override
+    public List<Message> findAllDialog(int sendUser, int toUser){
+        return messageRepository.findAllDialog(sendUser,toUser);
     }
 }

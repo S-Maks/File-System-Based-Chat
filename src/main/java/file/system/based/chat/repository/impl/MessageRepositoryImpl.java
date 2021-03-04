@@ -6,9 +6,7 @@ import file.system.based.chat.repository.MessageRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -49,6 +47,20 @@ public class MessageRepositoryImpl implements MessageRepository {
     public void delete(Message message) {
 
     }
+    @Override
+    public List<Message> findAllDialog(int sendUser, int toUser) {
+        File findFile = new File(FILE_CATALOG_DATABASE_MESSAGES);
+        Set<String> files = loadToSetNamesFiles(findFile);
+        if (!files.isEmpty()) {
+            for (String fileName : files) {
+                if (fileName.endsWith(sendUser + " " + toUser)
+                        || fileName.endsWith(toUser + " " + sendUser)) {
+                    return readDialogToList(fileName, sendUser, toUser);
+                }
+            }
+        }
+        return null;
+    }
 
     private Set<String> loadToSetNamesFiles(File findFile){
         return  Arrays.stream(Objects.requireNonNull(findFile.list()))
@@ -84,5 +96,31 @@ public class MessageRepositoryImpl implements MessageRepository {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    private List<Message> readDialogToList(String fileName, int sendUser, int toUser) {
+        File file = new File(fileName);
+        List<Message> messageList = new ArrayList<>();
+        Message message;
+        List<String> list = Arrays.stream(Objects.requireNonNull(file.list()))
+                .parallel()
+                .collect(Collectors.toList());
+        for (String findFile : list) {
+            message = new Message();
+            message.setDate(findFile.substring(findFile.length() - 23, findFile.length() - 4));//select the date
+            message.setSendUser(Integer.parseInt(findFile.substring(0, findFile.length() - 24)));//select the sendUser
+            if (message.getSendUser() == sendUser) {
+                message.setToUser(toUser);
+            } else {
+                message.setToUser(sendUser);
+            }
+            try (FileReader fileReader = new FileReader(file.getAbsolutePath() + "\\" + findFile); BufferedReader bufferedReader = new BufferedReader(fileReader)) {
+                message.setContent(bufferedReader.readLine());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            messageList.add(message);
+        }
+        messageList.sort(Comparator.comparing(Message::getDate));
+        return messageList;
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -21,6 +22,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public Optional<User> findByLogin(String login) throws IOException {
@@ -34,20 +37,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public void save(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
     @Override
     @SneakyThrows
     public UserDetails loadUserByUsername(String s) {
-
-        UserDetails details = findByLogin(s).orElse(null);
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                    details, null, details.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(auth);
-
-        return details;
+        return findByLogin(s).orElse(null);
     }
-
-
 }

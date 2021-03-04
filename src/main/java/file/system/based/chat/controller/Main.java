@@ -5,10 +5,7 @@ import file.system.based.chat.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-
-import java.io.IOException;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class Main {
@@ -17,24 +14,25 @@ public class Main {
     private UserService userService;
 
     @GetMapping("/")
-    public String homePage(Authentication authentication) throws IOException {
-        System.out.println(userService.findByLogin("admin"));
+    public String homePage(Authentication authentication) {
+        if(authentication!=null){
+            return "redirect:/chat";
+        }
         return "home";
     }
 
     @GetMapping("/registration")
-    public String registrationPage(){
+    public String registrationPage() {
         return "registration";
     }
 
     @PostMapping("/registration")
-    public String registrationPage(User user){
+    public String registrationPage(User user) {
         userService.save(user);
         return "redirect:/";
     }
-
-    @GetMapping("/admin")
-    public String adminPage(){
-        return "admin";
+    @GetMapping("/chat")
+    public String adminPage() {
+        return "chat";
     }
 }

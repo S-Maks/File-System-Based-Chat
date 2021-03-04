@@ -30,12 +30,7 @@ public class UserRepositoryImpl implements UserRepository {
         File findFile = new File(FILE_CATALOG_DATABASE_USERS);
         String[] files = findFile.list((folder, name) -> name.endsWith(".txt"));
         if (files != null) {
-            Arrays.stream(files).findFirst();
-            for (String fileName : files) {
-                if((login + ".txt").equals(fileName)){
-                   return Optional.of(readeFile(fileName));
-                }
-            }
+            return Optional.of(readeFile(Arrays.stream(files).parallel().filter(s -> s.equals(login + ".txt")).findFirst().get()));
         }
         return Optional.empty();
     }
@@ -47,9 +42,10 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void save(User user) {
-        file = new File(FILE_CATALOG_DATABASE_USERS +"\\"+ user.getLogin() + ".txt");
+        String dataUser = autoId() +"\n" + user.getLogin() + "\n" + user.getPassword();
+        file = new File(FILE_CATALOG_DATABASE_USERS +"/"+ user.getLogin() + ".txt");
         try(FileWriter fileWriter = new FileWriter(file)) {
-            fileWriter.write(autoId() + "\n" + user.getLogin() + "\n" + user.getPassword());
+            fileWriter.write(dataUser);
             fileWriter.flush();
         } catch (IOException e) {
             e.printStackTrace();
@@ -60,9 +56,7 @@ public class UserRepositoryImpl implements UserRepository {
         File findFile = new File(FILE_CATALOG_DATABASE_USERS);
         String[] files = findFile.list((folder, name) -> name.endsWith(".txt"));
         if (files != null) {
-            for (String fileName : files) {
-                map.put(fileName, readeFile(fileName));
-            }
+            map = Arrays.stream(files).parallel().collect(Collectors.toMap(s -> s, this::readeFile));
         }
     }
 
@@ -81,17 +75,18 @@ public class UserRepositoryImpl implements UserRepository {
 
             password = reader.readLine();
             user.setPassword(password);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
         return user;
     }
 
-    private long autoId(){
+    private String autoId(){
         loadMap();
-        //return map.values().stream().max(User::compare)+1;
-   return 1;
+        if(!map.isEmpty()){
+            return String.valueOf(map.values().stream().max(Comparator.comparingLong(User::getId)).get().getId()+1);
+        }else{
+            return "1";
+        }
     }
 }
